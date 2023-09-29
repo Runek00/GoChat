@@ -1,3 +1,3 @@
 # GoChat
 
-Another project from my AI overloard/teacher (same thing)
+Another project from my AI overlord/teacher (same thing)
