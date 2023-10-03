@@ -6,8 +6,6 @@ import (
 	"text/template"
 )
 
-var Texts = make([]string, 0)
-
 func main() {
 
 	InitDb()
