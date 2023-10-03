@@ -37,7 +37,7 @@ func CheckUser(login string, password string) bool {
 }
 
 func GetUser(login string) (User, bool) {
-	rows, err := db.Query("select * from user where login = ?", login)
+	rows, err := db.Query("select login, password from user where login = ?", login)
 	if err != nil {
 		log.Fatal(err)
 	}
