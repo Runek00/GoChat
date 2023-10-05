@@ -34,8 +34,8 @@ func CloseDb() {
 
 func CheckUser(login string, password string) bool {
 	usr, ok := GetUser(login)
-	hash, _ := hashPassword(password)
-	return ok && usr.password == hash
+	err := bcrypt.CompareHashAndPassword([]byte(usr.password), []byte(password))
+	return ok && err == nil
 }
 
 func GetUser(login string) (User, bool) {
