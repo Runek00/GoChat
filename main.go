@@ -44,7 +44,8 @@ func register(w http.ResponseWriter, r *http.Request) {
 	case "POST":
 		_, exists := GetUser(r.FormValue("login"))
 		if exists {
-			http.Redirect(w, r, "/register", http.StatusSeeOther)
+			tmpl := template.Must(template.ParseFiles("register.html"))
+			tmpl.Execute(w, "User with that login already exists")
 			return
 		}
 		AddUser(r.FormValue("login"), r.FormValue("password"))
@@ -62,7 +63,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 			createSession(w, r, r.FormValue("login"))
 			http.Redirect(w, r, "/hello", http.StatusSeeOther)
 		} else {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			tmpl := template.Must(template.ParseFiles("login.html"))
+			tmpl.Execute(w, "Wrong login or password")
 		}
 	}
 }

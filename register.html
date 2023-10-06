@@ -10,6 +10,7 @@
 <body>
     <div style="display: flex; justify-content: center; margin-top: 200px;">
         <form action="/register" method="post">
+            {{if . }} <span class="bad color bg">{{ . }} </span> {{end}}
             <label for="login">Login</label>
             <input type="text" name="login" id="login">
             <label for="password">Password</label>
