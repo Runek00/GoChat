@@ -3,61 +3,82 @@ package main
 import (
 	"database/sql"
 	"log"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
-	login    string
+	Id       int
+	Login    string
 	password string
-}
-
-var db *sql.DB
-
-func InitDb() {
-	var err error
-	db, err = sql.Open("sqlite3", "users.db")
-	if err != nil {
-		log.Fatal(err)
-	}
-	_, err = db.Query("select 1 from user")
-	if err != nil {
-		db.Exec("create table if not exists user(id INTEGER PRIMARY KEY AUTOINCREMENT, login text not null, password text not null);")
-		db.Exec("create unique index if not exists user_login_IDX on user (login);")
-	}
-}
-
-func CloseDb() {
-	db.Close()
+	RegDate  time.Time
+	Location string
+	Info     string
+	Active   bool
 }
 
 func CheckUser(login string, password string) bool {
-	usr, ok := GetUser(login)
-	err := bcrypt.CompareHashAndPassword([]byte(usr.password), []byte(password))
+	hash, ok := getPassword(login)
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return ok && err == nil
 }
 
-func GetUser(login string) (User, bool) {
-	rows, err := db.Query("select login, password from user where login = ?", login)
+func GetUserByLogin(login string) (User, bool) {
+	rows, err := Db().Query("select * from user where login = ?", login)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer rows.Close()
+	return parseRowsToUser(rows)
+}
+
+func GetUser(id int) (User, bool) {
+	rows, err := Db().Query("select * from user where id = ?", id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	return parseRowsToUser(rows)
+}
+
+func parseRowsToUser(rows *sql.Rows) (User, bool) {
 	usr := User{}
 	if rows.Next() {
-		err = rows.Scan(&usr.login, &usr.password)
+		var regdate int64
+		err := rows.Scan(&usr.Id, &usr.Login, &usr.password, &regdate, &usr.Location, &usr.Info, &usr.Active)
 		if err != nil {
 			log.Fatal(err)
 		}
+		usr.RegDate = time.Unix(regdate, 0)
 		return usr, true
 	} else {
 		return usr, false
 	}
 }
 
+func getPassword(login string) (string, bool) {
+	rows, err := Db().Query("select password from user where login = ?", login)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	var password string
+	if rows.Next() {
+		err = rows.Scan(&password)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return password, true
+	} else {
+		return password, false
+	}
+}
+
 func AddUser(login string, password string) {
 	hash, _ := hashPassword(password)
-	_, err := db.Exec("insert into user(login, password) values (?, ?)", login, hash)
+	_, err := Db().Exec("insert into user(login, password, regDate, location, info, active) values (?, ?, ?, ?, ?, ?)", login, hash, time.Now().Unix(), "", "", true)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -66,4 +87,11 @@ func AddUser(login string, password string) {
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
+}
+
+func EditUser(user User) {
+	_, err := Db().Exec("update user set password = ?, location = ?, info=?, active = ? where id = ?", user.password, user.Location, user.Info, user.Active, user.Id)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

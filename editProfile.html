@@ -1,0 +1,19 @@
+<form action="/editProfile" method="post">
+    <p>Login: {{ .User.Login }}</p>
+    <p>Register date: {{ .User.RegDate }}</p>
+    <label for="location">Location</label> 
+    {{if eq .User.Location ""}}
+    <input type="text" name="location" id="location">
+    {{else}}
+    <input type="text" name="location" id="location"  value={{ .User.Location }}>
+    {{end}}
+    <label for="info">Info</label> 
+    {{if eq .User.Info ""}}
+    <input type="text" name="info" id="info">
+    {{else}}
+    <input type="text" name="info" id="info" value={{ .User.Info }}>
+    {{end}}
+    <span  style="text-align: center;">
+        <button type="submit">Save</button>
+    </span>
+</form>

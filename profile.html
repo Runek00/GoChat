@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://unpkg.com/missing.css@1.1.1">
+    <script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div style="display: flex; justify-content: center; margin-top: 200px;">
+        {{template "viewProfile" .}}
+
+        {{ define "viewProfile" }}
+        <div id = "fields">
+            <p>Login: {{ .User.Login }}</p>
+            <p>Register date: {{ .User.RegDate }}</p>
+            <p>Location:<br> {{ .User.Location }}</p>
+            <p>Info:<br> {{ .User.Info }}</p>
+            {{if .CanEdit }}<button hx-get="/editProfile", hx-target="#fields", hx-swap="outerHTML">Edit</button>{{end}}
+        </div>
+        {{ end }}
+    </div>
+</body>
+</html>
