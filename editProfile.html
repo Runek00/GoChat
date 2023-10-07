@@ -1,0 +1,14 @@
+<form action="/editProfile" method="post">
+    {{if . }} <span class="bad color bg">{{ . }} </span> {{end}}
+    <p>Login: {{ .user.login }}</p>
+    <p>Register date: {{ .user.regDate }}</p>
+    <label for="from">From</label> 
+    <input type="text" name="from" id="from" value={{ .user.from }}>
+    <label for="info">Info</label> 
+    <input type="text" name="info" id="info" value={{ .user.info }}>
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password">
+    <span  style="text-align: center;">
+        <button type="submit">Log in</button>
+    </span>
+</form>
