@@ -1,6 +1,7 @@
-package main
+package api
 
 import (
+	"GoChat/internal/db"
 	"html/template"
 	"net/http"
 	"os"
@@ -23,16 +24,16 @@ func initStore() {
 func register(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		tmpl := template.Must(template.ParseFiles("register.html"))
+		tmpl := template.Must(template.ParseFiles("web/templates/register.html"))
 		tmpl.Execute(w, nil)
 	case "POST":
-		_, exists := GetUserByLogin(r.FormValue("login"))
+		_, exists := db.GetUserByLogin(r.FormValue("login"))
 		if exists {
-			tmpl := template.Must(template.ParseFiles("register.html"))
+			tmpl := template.Must(template.ParseFiles("web/templates/register.html"))
 			tmpl.Execute(w, "User with that login already exists")
 			return
 		}
-		AddUser(r.FormValue("login"), r.FormValue("password"))
+		db.AddUser(r.FormValue("login"), r.FormValue("password"))
 		http.Redirect(w, r, "/hello", http.StatusSeeOther)
 	}
 }
@@ -40,21 +41,21 @@ func register(w http.ResponseWriter, r *http.Request) {
 func login(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		tmpl := template.Must(template.ParseFiles("login.html"))
+		tmpl := template.Must(template.ParseFiles("web/templates/login.html"))
 		tmpl.Execute(w, nil)
 	case "POST":
-		if CheckUser(r.FormValue("login"), r.FormValue("password")) {
+		if db.CheckUser(r.FormValue("login"), r.FormValue("password")) {
 			createSession(w, r, r.FormValue("login"))
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 		} else {
-			tmpl := template.Must(template.ParseFiles("login.html"))
+			tmpl := template.Must(template.ParseFiles("web/templates/login.html"))
 			tmpl.Execute(w, "Wrong login or password")
 		}
 	}
 }
 
 func createSession(w http.ResponseWriter, r *http.Request, login string) *sessions.Session {
-	user, exists := GetUserByLogin(login)
+	user, exists := db.GetUserByLogin(login)
 	if !exists {
 		http.Error(w, "No such user", http.StatusInternalServerError)
 		return nil
@@ -79,17 +80,17 @@ func CheckSession(w http.ResponseWriter, r *http.Request) bool {
 	return ok
 }
 
-func GetSessionUser(w http.ResponseWriter, r *http.Request) User {
+func GetSessionUser(w http.ResponseWriter, r *http.Request) db.User {
 	session, _ := Store.Get(r, "session")
 	id, ok := session.Values["userId"]
 	if !ok {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return User{}
+		return db.User{}
 	}
-	usr, ok := GetUser(id.(int))
+	usr, ok := db.GetUser(id.(int))
 	if !ok {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return User{}
+		return db.User{}
 	}
 	return usr
 }

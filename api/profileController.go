@@ -1,12 +1,13 @@
-package main
+package api
 
 import (
+	"GoChat/internal/db"
 	"html/template"
 	"net/http"
 )
 
 type ProfileInfo struct {
-	User    User
+	User    db.User
 	CanEdit bool
 }
 
@@ -18,7 +19,7 @@ func InitProfile() {
 func showMyProfile(w http.ResponseWriter, r *http.Request) {
 	usr := GetSessionUser(w, r)
 	info := ProfileInfo{usr, true}
-	tmpl := template.Must(template.ParseFiles("profile.html"))
+	tmpl := template.Must(template.ParseFiles("web/templates/profile.html"))
 	tmpl.Execute(w, info)
 }
 
@@ -27,14 +28,14 @@ func editProfile(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		info := ProfileInfo{usr, true}
-		tmpl := template.Must(template.ParseFiles("editProfile.html"))
+		tmpl := template.Must(template.ParseFiles("web/templates/editProfile.html"))
 		tmpl.Execute(w, info)
 	case "POST":
 		usr.Location = r.FormValue("location")
 		usr.Info = r.FormValue("info")
-		EditUser(usr)
+		db.EditUser(usr)
 		info := ProfileInfo{usr, true}
-		tmpl := template.Must(template.ParseFiles("profile.html"))
+		tmpl := template.Must(template.ParseFiles("web/templates/profile.html"))
 		tmpl.Execute(w, info)
 	}
 }

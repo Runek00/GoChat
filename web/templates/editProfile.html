@@ -13,7 +13,6 @@
     {{else}}
     <input type="text" name="info" id="info" value={{ .User.Info }}>
     {{end}}
-    <span  style="text-align: center;">
-        <button type="submit">Save</button>
-    </span>
+    <button type="submit" _="on click add .htmx-indicator to me then remove .htmx-indicator from #waiting">Save</button>
+    <img id="waiting" class="htmx-indicator" src="/img/spinning-circles.svg" alt="Request In Flight..."/>
 </form>
