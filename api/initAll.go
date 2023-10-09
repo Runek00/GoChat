@@ -13,7 +13,7 @@ func InitAll() {
 	Init()
 }
 
-func h1(w http.ResponseWriter, r *http.Request) {
+func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	if !CheckSession(w, r) {
 		return
 	}
@@ -24,7 +24,7 @@ func Init() {
 	http.HandleFunc("/favicon.ico", favicon)
 	http.HandleFunc("/img/", img)
 	http.HandleFunc("/hello", hello)
-	http.HandleFunc("/", h1)
+	http.HandleFunc("/", defaultHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
