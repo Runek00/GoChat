@@ -11,7 +11,6 @@ func InitAll() {
 	InitAuth()
 	InitProfile()
 	Init()
-	InitChat()
 }
 
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
@@ -25,6 +24,7 @@ func Init() {
 	http.HandleFunc("/favicon.ico", favicon)
 	http.HandleFunc("/img/", img)
 	http.HandleFunc("/hello", hello)
+	http.HandleFunc("/chatroom", chatroom)
 	http.HandleFunc("/", defaultHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -44,5 +44,13 @@ func hello(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tmpl := template.Must(template.ParseFiles("web/templates/hello.html"))
+	tmpl.Execute(w, nil)
+}
+
+func chatroom(w http.ResponseWriter, r *http.Request) {
+	if !CheckSession(w, r) {
+		return
+	}
+	tmpl := template.Must(template.ParseFiles("web/templates/chatroom.html"))
 	tmpl.Execute(w, nil)
 }

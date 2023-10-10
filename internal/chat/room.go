@@ -25,6 +25,7 @@ func newRoom() *room {
 		joinChan:  make(chan *client),
 		leaveChan: make(chan *client),
 		forward:   make(chan *string),
+		messages:  make([]*string, 0),
 	}
 }
 
