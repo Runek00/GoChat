@@ -49,7 +49,7 @@ func (r *room) sendPast(c *client) {
 }
 
 func (r *room) sendAll(msg *string) {
-	for c, _ := range r.clients {
+	for c := range r.clients {
 		go c.Write(*msg)
 	}
 }

@@ -14,8 +14,6 @@ type client struct {
 	room *room
 
 	closed bool
-
-	username string
 }
 
 func newClient(ws *websocket.Conn, room *room) *client {
