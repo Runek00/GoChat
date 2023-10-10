@@ -17,11 +17,9 @@
             <div id="chat_room">
                 ...
             </div>
+            <form id="form" ws-send hx-trigger="keyup[enterKey]">
+                <input name="chat_message">
+            </form>
     </div>
-    <textarea 
-            id="newMessage" 
-            hx-post="/newMessage/{{.roomId}}"
-            hx-trigger="keyup[enterKey]"
-            hx-swap="outerHTML"></textarea>
 </body>
 </html>

@@ -11,6 +11,7 @@ func InitAll() {
 	InitAuth()
 	InitProfile()
 	Init()
+	InitChat()
 }
 
 func defaultHandler(w http.ResponseWriter, r *http.Request) {

@@ -1,0 +1,13 @@
+<form id="form">
+    <input name="chat_message" hx-swap-oob="idiomorph">
+</form>
+
+<div id="notifications" hx-swap-oob="beforeend">
+    New message received
+</div>
+
+<div id="chat_room" hx-swap-oob="idiomorph">
+    {{ range .messages }}
+        <p>{{ . }}</p>
+    {{ end }}
+</div>
