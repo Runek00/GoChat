@@ -1,6 +1,7 @@
 package chat
 
 import (
+	"GoChat/api"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -11,23 +12,30 @@ import (
 	"golang.org/x/net/websocket"
 )
 
+var unknownUsers = 0
+
 type Server struct {
-	conns map[*websocket.Conn]bool
+	conns map[*websocket.Conn]string
 
 	messages []string
 }
 
 func newServer() *Server {
 	return &Server{
-		conns:    make(map[*websocket.Conn]bool),
+		conns:    make(map[*websocket.Conn]string),
 		messages: make([]string, 0),
 	}
 }
 
 func (s *Server) handleWS(ws *websocket.Conn) {
 	fmt.Println("new incoming connection from client:", ws.RemoteAddr())
-
-	s.conns[ws] = true
+	session, _ := api.Store.Get(ws.Request(), "session")
+	login, ok := session.Values["login"]
+	if !ok {
+		login = "unknown_user_" + fmt.Sprint(unknownUsers)
+		unknownUsers++
+	}
+	s.conns[ws] = login.(string)
 
 	s.readLoop(ws)
 }
@@ -44,7 +52,7 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 			continue
 		}
 		msg := buf[:n]
-		content := parseMessage(msg)
+		content := s.conns[ws] + ": " + parseMessage(msg)
 		s.messages = append(s.messages, content)
 		toSend := formatMessages(s)
 		go s.broadcast(toSend)
@@ -88,7 +96,6 @@ func (s *Server) broadcast(b []byte) {
 			if _, err := ws.Write(b); err != nil {
 				fmt.Println("write error: ", err)
 			}
-
 		}(ws)
 	}
 }
