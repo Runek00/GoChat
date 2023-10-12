@@ -1,5 +1,5 @@
-<form id="form">
-    <input name="chat_message" hx-swap-oob="idiomorph">
+<form id="form" ws-send>
+    <input name="chat_message" hx-trigger="keyup[enterKey]" hx-swap-oob="idiomorph">
 </form>
 
 <div id="notifications" hx-swap-oob="beforeend">
@@ -7,7 +7,7 @@
 </div>
 
 <div id="chat_room" hx-swap-oob="idiomorph">
-    {{ range .messages }}
+    {{ range . }}
         <p>{{ . }}</p>
     {{ end }}
 </div>

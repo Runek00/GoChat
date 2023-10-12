@@ -1,21 +1,26 @@
 package chat
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"text/template"
 
 	"golang.org/x/net/websocket"
 )
 
 type Server struct {
 	conns map[*websocket.Conn]bool
+
+	messages []string
 }
 
 func newServer() *Server {
 	return &Server{
-		conns: make(map[*websocket.Conn]bool),
+		conns:    make(map[*websocket.Conn]bool),
+		messages: make([]string, 0),
 	}
 }
 
@@ -39,13 +44,42 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 			continue
 		}
 		msg := buf[:n]
-		decoded := make(map[string]string)
-		err = json.Unmarshal(msg, &decoded)
-		if err != nil {
-			fmt.Println("unmarshalling error: ", err)
-		}
-		s.broadcast([]byte(decoded["chat_message"]))
+		content := parseMessage(msg)
+		s.messages = append(s.messages, content)
+		toSend := formatMessages(s)
+		go s.broadcast(toSend)
 	}
+}
+
+func parseMessage(msg []byte) string {
+	decoded := make(map[string]any)
+	err := json.Unmarshal(msg, &decoded)
+	if err != nil {
+		fmt.Println("unmarshalling error: ", err)
+	}
+	dec := decoded["chat_message"]
+	return asString(dec)
+}
+
+func asString(dec any) string {
+	outs, ok := dec.(string)
+	if ok {
+		return outs
+	}
+	outb, ok := dec.([]byte)
+	if ok {
+		return string(outb)
+	}
+	return ""
+}
+
+func formatMessages(s *Server) []byte {
+	var buf bytes.Buffer
+	tmpl := template.Must(template.ParseFiles("web/templates/chatresponse.html"))
+	if err := tmpl.Execute(&buf, s.messages); err != nil {
+		return []byte("")
+	}
+	return buf.Bytes()
 }
 
 func (s *Server) broadcast(b []byte) {
