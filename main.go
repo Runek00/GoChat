@@ -10,6 +10,6 @@ func main() {
 
 	db.InitDb()
 	defer db.CloseDb()
-	api.InitAll()
 	chat.InitChat()
+	api.InitAll()
 }

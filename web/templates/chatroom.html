@@ -12,13 +12,13 @@
     <script src="https://unpkg.com/idiomorph/dist/idiomorph-ext.min.js"></script>
 </head>
 <body>
-    <div id="chats" hx-ext="ws" ws-connect="/chatroom">
+    <div id="chats" hx-ext="ws" ws-connect="/chat">
             <div id="notifications"></div>
             <div id="chat_room">
                 ...
             </div>
-            <form id="form" ws-send hx-trigger="keyup[enterKey]">
-                <input name="chat_message">
+            <form id="form" ws-send>
+                <input name="chat_message" hx-trigger="keyup[enterKey]">
             </form>
     </div>
 </body>
