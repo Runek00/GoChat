@@ -103,4 +103,15 @@ func (s *Server) broadcast(b []byte) {
 func InitChat() {
 	server := newServer()
 	http.Handle("/chat", websocket.Handler(server.handleWS))
+	http.HandleFunc("/chatroom", getChatroomFunc(server))
+}
+
+func getChatroomFunc(server *Server) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !api.CheckSession(w, r) {
+			return
+		}
+		tmpl := template.Must(template.ParseFiles("web/templates/chatroom.html"))
+		tmpl.Execute(w, server.messages)
+	}
 }

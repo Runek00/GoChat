@@ -1,9 +1,9 @@
 <form id="form" ws-send>
-    <input name="chat_message" hx-trigger="keyup[enterKey]" hx-swap-oob="idiomorph">
+    <input name="chat_message" hx-trigger="keyup[enterKey]" hx-swap-oob="idiomorph" autofocus>
 </form>
 
-<div id="notifications" hx-swap-oob="beforeend">
-    New message received
+<div class="inline" id="notifications" hx-swap-oob="beforeend">
+    <div class="chip" _="on load wait 3s then transition opacity to 0 then remove me">New message received</div>
 </div>
 
 <div id="chat_room" hx-swap-oob="idiomorph">

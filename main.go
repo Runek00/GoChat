@@ -7,7 +7,6 @@ import (
 )
 
 func main() {
-
 	db.InitDb()
 	defer db.CloseDb()
 	chat.InitChat()
