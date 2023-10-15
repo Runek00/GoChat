@@ -1,13 +1,15 @@
-<form id="form" ws-send>
+<form id="form" style="margin-bottom: 10px;" ws-send>
     <input name="chat_message" hx-trigger="keyup[enterKey]" hx-swap-oob="idiomorph" autofocus>
 </form>
 
 <div class="inline" id="notifications" hx-swap-oob="beforeend">
-    <div class="chip" _="on load wait 3s then transition opacity to 0 then remove me">New message received</div>
+    <a href="#lastmsg" class="chip" _="on load wait 3s then transition opacity to 0 then remove me">New message!</a>
 </div>
 
-<div id="chat_room" hx-swap-oob="idiomorph">
+<div id="chat_room" style="height: calc(100vh - 70px)" class="overflow:auto">
     {{ range . }}
-        <p>{{ . }}</p>
+        <p class="packed">{{ . }}</p>
     {{ end }}
+    <p id="lastmsg" class="packed vh" _="on load call scrollIntoView() on me"></p>
+
 </div>

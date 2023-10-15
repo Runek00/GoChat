@@ -52,7 +52,7 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 			continue
 		}
 		msg := buf[:n]
-		content := s.conns[ws] + ": " + parseMessage(msg)
+		content := "<b>" + s.conns[ws] + "</b>: " + parseMessage(msg)
 		s.messages = append(s.messages, content)
 		toSend := formatMessages(s)
 		go s.broadcast(toSend)

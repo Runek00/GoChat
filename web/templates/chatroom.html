@@ -1,29 +1,37 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello!</title>
     <link rel="stylesheet" href="https://unpkg.com/missing.css@1.1.1">
-    <script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.6"
+        integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni"
+        crossorigin="anonymous"></script>
     <script src="https://unpkg.com/hyperscript.org@0.9.11"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
     <script src="https://unpkg.com/idiomorph/dist/idiomorph-ext.min.js"></script>
 </head>
+
 <body>
-    <div class="center" hx-ext="morph">
-        <div id="chats" hx-ext="ws" ws-connect="/chat">
-                <div id="chat_room" class="overflow:auto">
+    <div class="sidebar-layout">
+        <header>
+            <div id="notifications"></div>
+        </header>
+        <main hx-ext="morph">
+            <div id="chats" hx-ext="ws" ws-connect="/chat">
+                <div id="chat_room" style="height: calc(100vh - 70px)" class="overflow:auto">
                     {{ range . }}
-                        <p>{{ . }}</p>
+                    <p class="packed">{{ . }}</p>
                     {{ end }}
                 </div>
-                <form id="form" ws-send>
+                <form id="form" style="margin-bottom: 10px;" ws-send>
                     <input name="chat_message" hx-trigger="keyup[enterKey]" autofocus>
                 </form>
-                <div id="notifications"></div>
-        </div>
+            </div>
+        </main>
     </div>
 </body>
+
 </html>
