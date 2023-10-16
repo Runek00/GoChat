@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="https://unpkg.com/missing.css@1.1.1">
     <script src="https://unpkg.com/hyperscript.org@0.9.11"></script>
 </head>
+
 <body>
     <div style="display: flex; justify-content: center; margin-top: 200px;">
         <form action="/register" method="post">
@@ -14,11 +16,9 @@
             <label for="login">Login</label>
             <input type="text" name="login" id="login">
             <label for="password">Password</label>
-            <input type="password" name="password" id="password" 
-                _="on keyup send keyup to #repassword">
+            <input type="password" name="password" id="password" _="on keyup send keyup to #repassword">
             <label for="repassword">Repeat password</label>
-            <input type="password" class=".bad" name="repassword" id="repassword" 
-                _="on keyup set val to value of #password then
+            <input type="password" class=".bad" name="repassword" id="repassword" _="on keyup set val to value of #password then
                     remove .bad from me then
                     remove .ok from me then
                     add @disabled to #reg then
@@ -30,4 +30,5 @@
         </form>
     </div>
 </body>
+
 </html>

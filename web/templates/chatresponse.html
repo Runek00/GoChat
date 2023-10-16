@@ -8,7 +8,7 @@
 
 <div id="chat_room" style="height: calc(100vh - 70px)" class="overflow:auto">
     {{ range . }}
-        <p class="packed">{{ . }}</p>
+    <p class="packed">{{ . }}</p>
     {{ end }}
     <p id="lastmsg" class="packed vh" _="on load call scrollIntoView() on me"></p>
 
