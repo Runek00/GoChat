@@ -1,0 +1,2 @@
+create table if not exists user(id INTEGER PRIMARY KEY AUTOINCREMENT, login text not null, password text not null, regdate integer, location text, info text, active boolean);
+create unique index if not exists user_login_IDX on user (login);

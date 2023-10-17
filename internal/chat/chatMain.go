@@ -2,6 +2,7 @@ package chat
 
 import (
 	"GoChat/api"
+	"GoChat/internal/db"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -52,11 +53,22 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 			continue
 		}
 		msg := buf[:n]
-		content := "<b>" + s.conns[ws] + "</b>: " + parseMessage(msg)
+		parsed := parseMessage(msg)
+		go db.AddMessage(parsed, getUserId(ws))
+		content := "<b>" + s.conns[ws] + "</b>: " + parsed
 		s.messages = append(s.messages, content)
 		toSend := formatMessages(s)
 		go s.broadcast(toSend)
 	}
+}
+
+func getUserId(ws *websocket.Conn) int {
+	session, _ := api.Store.Get(ws.Request(), "session")
+	id, ok := session.Values["userId"]
+	if !ok {
+		id = -1
+	}
+	return id.(int)
 }
 
 func parseMessage(msg []byte) string {

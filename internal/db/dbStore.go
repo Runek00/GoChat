@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"log"
+	"os"
 )
 
 var db *sql.DB
@@ -14,9 +15,25 @@ func InitDb() {
 		log.Fatal(err)
 	}
 	_, err = db.Query("select 1 from user")
+	if err == nil {
+		_, err = db.Query("select 1 from message")
+	}
 	if err != nil {
-		db.Exec("create table if not exists user(id INTEGER PRIMARY KEY AUTOINCREMENT, login text not null, password text not null, regdate integer, location text, info text, active boolean);")
-		db.Exec("create unique index if not exists user_login_IDX on user (login);")
+		createDb(db)
+	}
+}
+
+func createDb(db *sql.DB) {
+	files, err := os.ReadDir("sql")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, file := range files {
+		sql, err := os.ReadFile("sql/" + file.Name())
+		if err != nil {
+			log.Fatal(err)
+		}
+		db.Exec(string(sql))
 	}
 }
 
