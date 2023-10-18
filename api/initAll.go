@@ -25,6 +25,7 @@ func Init() {
 	http.HandleFunc("/img/", img)
 	http.HandleFunc("/hello", hello)
 	http.HandleFunc("/", defaultHandler)
+	http.HandleFunc("/charts", defaultHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
