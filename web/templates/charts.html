@@ -9,21 +9,21 @@
 </head>
 <body>
     <div>
-  <canvas id="myChart"></canvas>
-</div>
+        <canvas id="userActivity"></canvas>
+    </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script hx-get="/chart_script" hx-trigger="every 5s">
-  const ctx = document.getElementById('myChart');
+<script>
+  const ctx = document.getElementById('userActivity');
 
   var chart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+      labels: [],
       datasets: [{
-        label: '# of Votes',
-        data: [12, 19, 3, 5, 2, 3],
+        label: '# of messages',
+        data: [],
         borderWidth: 1
       }]
     },
@@ -35,10 +35,9 @@
       }
     }
   });
-  chart.update();
 </script>
 
- 
+<div hx-get="/chart_script" hx-trigger="every 5s"></div> 
 
  
 </body>

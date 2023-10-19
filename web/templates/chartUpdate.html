@@ -1,0 +1,5 @@
+<script>
+	chart.data.datasets[0].data = {{ .Counts }};
+    chart.data.labels = {{ .Logins }};
+	chart.update('active');
+</script>

@@ -1,10 +1,12 @@
 package api
 
 import (
+	"GoChat/internal/db"
 	"html/template"
 	"log"
 	"net/http"
 	"strings"
+	txt "text/template"
 )
 
 func InitAll() {
@@ -54,25 +56,8 @@ func chartHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func chartScript(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(`
-  chart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-      datasets: [{
-        label: '# of Votes',
-        data: [55, 19, 3, 5, 2, 3],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
-  chart.update();
-`))
+	usr := GetSessionUser(w, r)
+	stats := db.GetStats(usr.Id)
+	tmpl := txt.Must(txt.ParseFiles("web/templates/chartUpdate.html"))
+	tmpl.Execute(w, stats)
 }
