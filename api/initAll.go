@@ -51,8 +51,10 @@ func hello(w http.ResponseWriter, r *http.Request) {
 }
 
 func chartHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("web/templates/charts.html"))
-	tmpl.Execute(w, nil)
+	usr := GetSessionUser(w, r)
+	stats := db.GetStats(usr.Login)
+	tmpl := txt.Must(txt.ParseFiles("web/templates/charts.html"))
+	tmpl.Execute(w, stats)
 }
 
 func chartScript(w http.ResponseWriter, r *http.Request) {

@@ -6,9 +6,10 @@
     <script src="https://unpkg.com/htmx.org@1.9.6"
         integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni"
         crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://unpkg.com/missing.css@1.1.1">
 </head>
 <body>
-    <div>
+    <div style="max-height: 800px;">
         <canvas id="userActivity"></canvas>
     </div>
 
@@ -20,10 +21,10 @@
   var chart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: [],
+      labels: {{ .Logins }},
       datasets: [{
         label: '# of messages',
-        data: [],
+        data: {{ .Counts }},
         borderWidth: 1
       }]
     },
