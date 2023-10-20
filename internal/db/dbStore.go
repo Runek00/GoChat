@@ -14,13 +14,7 @@ func InitDb() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = db.Query("select 1 from user")
-	if err == nil {
-		_, err = db.Query("select 1 from message")
-	}
-	if err != nil {
-		createDb(db)
-	}
+	createDb(db)
 }
 
 func createDb(db *sql.DB) {
