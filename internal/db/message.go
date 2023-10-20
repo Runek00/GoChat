@@ -6,49 +6,43 @@ import (
 	"time"
 )
 
-// type message struct {
-// 	msg    string
-// 	userId int
-// 	date   time.Time
-// }
+type MsgStats struct {
+	Logins string
+	Counts string
+}
+
+type rawStats struct {
+	logins []string
+	counts []int
+}
+
+var statsCache rawStats
+var cacheValid = false
 
 func AddMessage(msg string, userId int) {
 	_, err := Db().Exec("insert into message(message, user_id, message_date)values (?, ?, ?)", msg, userId, time.Now().Unix())
 	if err != nil {
 		log.Fatal(err)
 	}
+	cacheValid = false
 }
 
-type MsgStats struct {
-	Logins string
-	Counts string
+func GetStats(login string) MsgStats {
+	stats := getUnformattedStats()
+	return formatStats(stats, login)
 }
 
-func newStats() MsgStats {
-	return MsgStats{
-		Logins: "",
-		Counts: "",
-	}
-}
-
-func GetStats(userId int) MsgStats {
-	result, err := Db().Query("select u.id, u.login, count(*) cnt from user u join message m on m.user_id = u.id group by u.id order by cnt desc;")
-	if err != nil {
-		log.Println(err)
-		return newStats()
-	}
-	stats := newStats()
-	for result.Next() {
-		var login string
-		var count int
-		var id int
-		result.Scan(&id, &login, &count)
+func formatStats(rawStats rawStats, myLogin string) MsgStats {
+	stats := MsgStats{}
+	for i := 0; i < len(rawStats.counts); i++ {
+		login := rawStats.logins[i]
+		count := rawStats.counts[i]
 		if len(stats.Counts) == 0 {
 			stats.Counts = fmt.Sprint(count)
 			stats.Logins = "\"" + login + "\""
 			continue
 		}
-		if id == userId {
+		if login == myLogin {
 			stats.Logins = "\"" + login + "\", " + stats.Logins
 			stats.Counts = fmt.Sprint(count) + ", " + stats.Counts
 		} else {
@@ -59,5 +53,27 @@ func GetStats(userId int) MsgStats {
 	stats.Counts = "[" + stats.Counts + "]"
 	stats.Logins = "[" + stats.Logins + "]"
 	return stats
+}
 
+func getUnformattedStats() rawStats {
+	if cacheValid {
+		return statsCache
+	}
+	result, err := Db().Query("select u.login, count(*) cnt from user u join message m on m.user_id = u.id group by u.login order by cnt desc;")
+	if err != nil {
+		log.Println(err)
+		return rawStats{}
+	}
+
+	stats := rawStats{}
+	for result.Next() {
+		var login string
+		var count int
+		result.Scan(&login, &count)
+		stats.logins = append(stats.logins, login)
+		stats.counts = append(stats.counts, count)
+	}
+	statsCache = stats
+	cacheValid = true
+	return stats
 }

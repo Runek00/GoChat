@@ -57,7 +57,7 @@ func chartHandler(w http.ResponseWriter, r *http.Request) {
 
 func chartScript(w http.ResponseWriter, r *http.Request) {
 	usr := GetSessionUser(w, r)
-	stats := db.GetStats(usr.Id)
+	stats := db.GetStats(usr.Login)
 	tmpl := txt.Must(txt.ParseFiles("web/templates/chartUpdate.html"))
 	tmpl.Execute(w, stats)
 }
